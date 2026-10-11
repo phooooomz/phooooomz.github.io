@@ -2,12 +2,8 @@ let isTesting = false;
 let isAutoRunning = false;
 let autoInterval = null;
 
-// รายการเซิร์ฟเวอร์ทดสอบจริง
-const servers = {
-    cloudflare: 'https://www.cloudflare.com/cdn-cgi/trace',
-    wikimedia: 'https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg',
-    jsdelivr: 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js'
-};
+// ใช้เซิร์ฟเวอร์หลักที่เสถียรและรองรับ CORS / No-CORS สมบูรณ์
+const testServerUrl = 'https://www.cloudflare.com/cdn-cgi/trace';
 
 function toggleAutoTest() {
     isAutoRunning = !isAutoRunning;
@@ -18,7 +14,7 @@ function toggleAutoTest() {
         if (!isTesting) startSpeedTest();
         autoInterval = setInterval(() => {
             if (!isTesting) startSpeedTest();
-        }, 15000); // ทำซ้ำทุกๆ 15 วินาที
+        }, 15000);
     } else {
         autoBtn.innerText = "🔄 ทดสอบซ้ำอัตโนมัติ (ปิด)";
         autoBtn.classList.remove('bg-blue-900/40', 'border-blue-500/50');
@@ -41,7 +37,6 @@ async function startSpeedTest() {
     const summaryBox = document.getElementById('summary-box');
     const summaryContent = document.getElementById('summary-content');
     const errorBox = document.getElementById('error-box');
-    const selectedServerKey = document.getElementById('server-select').value;
 
     startBtn.disabled = true;
     startBtn.classList.add('opacity-50', 'cursor-not-allowed');
@@ -56,15 +51,15 @@ async function startSpeedTest() {
     mainUnit.innerText = "Mbps Download";
 
     try {
-        // 1. วัดค่า Ping และ Jitter (ความหน่วงจริง)
+        // 1. วัดค่า Ping และ Jitter
         statusBadge.innerText = "กำลังวัดค่า Ping และ Jitter...";
         let pings = [];
         for (let i = 0; i < 5; i++) {
             let start = performance.now();
-            await fetch(servers.cloudflare + "?" + Math.random(), { cache: 'no-store', mode: 'no-cors' });
+            await fetch(testServerUrl + "?" + Math.random(), { cache: 'no-store', mode: 'no-cors' });
             let end = performance.now();
             pings.push(end - start);
-            await new Promise(r => setTimeout(r, 100));
+            await new Promise(r => setTimeout(r, 80));
         }
 
         let avgPing = Math.round(pings.reduce((a, b) => a + b, 0) / pings.length);
@@ -78,11 +73,11 @@ async function startSpeedTest() {
         resPing.innerText = avgPing + " ms";
         resJitter.innerText = jitter + " ms";
 
-        // 2. วัดความเร็วดาวน์โหลดแบบเรียลไทม์ (Download Speed) จากข้อมูลจริง
+        // 2. วัดความเร็วดาวน์โหลดแบบเรียลไทม์ (Download Speed)
         statusBadge.innerText = "กำลังทดสอบความเร็วดาวน์โหลด...";
         mainUnit.innerText = "Mbps Download";
 
-        let targetUrl = servers[selectedServerKey] + "?" + Math.random();
+        let targetUrl = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg?" + Math.random();
         let startTime = performance.now();
         
         const response = await fetch(targetUrl, { cache: 'no-store' });
@@ -112,16 +107,18 @@ async function startSpeedTest() {
         mainSpeed.innerText = finalDownloadMbps;
         resDownload.innerText = finalDownloadMbps + " Mbps";
 
-        // 3. วัดความเร็วอัปโหลด (Upload Speed) จากข้อมูลจริง
+        // 3. วัดความเร็วอัปโหลด (Upload Speed) - แก้ไขปัญหาเรื่องข้อจำกัดขนาดของ Crypto โดยใช้ Math.random เติมข้อมูลแทน
         statusBadge.innerText = "กำลังทดสอบความเร็วอัปโหลด...";
         mainUnit.innerText = "Mbps Upload";
 
-        let uploadDataSize = 1.5 * 1024 * 1024; 
+        let uploadDataSize = 512 * 1024; // ปรับขนาดให้เหมาะสมและไม่เกินข้อจำกัดของเบราว์เซอร์
         let dummyData = new Uint8Array(uploadDataSize);
-        window.crypto.getRandomValues(dummyData);
+        for (let i = 0; i < dummyData.length; i++) {
+            dummyData[i] = Math.floor(Math.random() * 256);
+        }
 
         let uploadStart = performance.now();
-        await fetch(servers.cloudflare, {
+        await fetch(testServerUrl, {
             method: 'POST',
             body: dummyData,
             mode: 'no-cors',
@@ -130,13 +127,14 @@ async function startSpeedTest() {
         let uploadEnd = performance.now();
 
         let uploadDurationSec = (uploadEnd - uploadStart) / 1000;
+        if (uploadDurationSec <= 0) uploadDurationSec = 0.05; // ป้องกันหารด้วยศูนย์
         let uploadBits = uploadDataSize * 8;
         let uploadBps = uploadBits / uploadDurationSec;
         let finalUploadMbps = parseFloat((uploadBps / (1024 * 1024)).toFixed(2));
 
         for (let i = 1; i <= 10; i++) {
             mainSpeed.innerText = (finalUploadMbps * (i / 10)).toFixed(2);
-            await new Promise(r => setTimeout(r, 40));
+            await new Promise(r => setTimeout(r, 30));
         }
         mainSpeed.innerText = finalUploadMbps;
         resUpload.innerText = finalUploadMbps + " Mbps";
@@ -147,8 +145,7 @@ async function startSpeedTest() {
         summaryContent.innerHTML = `
             • ความเร็วดาวน์โหลด: <b>${finalDownloadMbps} Mbps</b><br>
             • ความเร็วอัปโหลด: <b>${finalUploadMbps} Mbps</b><br>
-            • ค่า Ping: <b>${avgPing} ms</b> | Jitter: <b>${jitter} ms</b><br>
-            • เซิร์ฟเวอร์: <b>${selectedServerKey.toUpperCase()}</b>
+            • ค่า Ping: <b>${avgPing} ms</b> | Jitter: <b>${jitter} ms</b>
         `;
         summaryBox.classList.remove('hidden');
 

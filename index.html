@@ -1,82 +1,65 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Network Speed Test</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="ทดสอบความเร็วอินเทอร์เน็ต Download, Upload, Ping และ Jitter">
+  <title>Speed Test</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Speed Test หน้าแรก"><span class="brand-mark">S</span><span>speed<span class="brand-light">test</span></span></a>
+    <span class="live-label"><span class="live-dot"></span> INTERNET TEST</span>
+  </header>
 
-    <!-- Header -->
-    <header class="max-w-xl mx-auto w-full text-center py-4">
-        <h1 class="text-xl font-bold text-blue-400 tracking-wide">LIVE SPEED TEST</h1>
-        <p class="text-slate-400 text-xs mt-1">ระบบวัดความเร็วเครือข่ายด้วยข้อมูลจริง</p>
-    </header>
+  <main class="page">
+    <section class="test-panel" aria-labelledby="page-title">
+      <p class="eyebrow">INTERNET SPEED TEST</p>
+      <h1 id="page-title">ความเร็วอินเทอร์เน็ตของคุณ</h1>
+      <p class="intro">ทดสอบการเชื่อมต่อของคุณแบบเรียลไทม์</p>
 
-    <!-- Main Card -->
-    <main class="max-w-xl mx-auto w-full bg-slate-900/90 border border-slate-800/80 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-md text-center my-auto">
-        
-        <!-- สถานะระหว่างทดสอบ -->
-        <div id="status-badge" class="inline-block px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold tracking-wider uppercase mb-6 transition-all duration-300">
-            พร้อมเริ่มต้นทดสอบ
+      <div class="speed-display" aria-live="polite">
+        <div class="speed-number-wrap">
+          <span id="speed-number" class="speed-number">—</span>
+          <span class="speed-unit">Mbps</span>
         </div>
+        <div id="phase-label" class="phase-label">พร้อมทดสอบ</div>
+        <div class="progress-track" aria-hidden="true"><div id="progress-bar" class="progress-bar"></div></div>
+      </div>
 
-        <!-- แสดงความเร็วดาวน์โหลดตัวเลขขนาดใหญ่ (เรียลไทม์) -->
-        <div class="my-6">
-            <div id="main-speed" class="tabular-nums text-7xl md:text-8xl font-black text-white tracking-tighter">0.00</div>
-            <div id="main-unit" class="text-xs md:text-sm text-slate-400 uppercase tracking-widest mt-1 font-semibold">Mbps Download</div>
-        </div>
+      <button id="start-button" class="start-button" type="button">เริ่มทดสอบ</button>
+      <p id="status-message" class="status-message" role="status">กดปุ่มเพื่อเริ่มวัดความเร็ว</p>
+      <p class="server-note">เซิร์ฟเวอร์ทดสอบ: Cloudflare · ผลลัพธ์อาจต่างกันตามเครือข่าย</p>
+    </section>
 
-        <!-- ปุ่มเริ่มทดสอบและทดสอบซ้ำอัตโนมัติ -->
-        <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <button id="start-btn" onclick="startSpeedTest()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 px-8 rounded-2xl transition duration-200 cursor-pointer shadow-lg shadow-blue-600/30 text-base">
-                เริ่มทดสอบความเร็ว
-            </button>
-            <button id="auto-btn" onclick="toggleAutoTest()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-4 px-6 rounded-2xl transition duration-200 cursor-pointer border border-slate-700/50 text-xs">
-                🔄 ทดสอบซ้ำอัตโนมัติ (ปิด)
-            </button>
-        </div>
+    <section class="results" aria-label="ผลการทดสอบ">
+      <article class="result-card">
+        <div class="result-heading"><span class="metric-icon download-icon">↓</span><span>Download</span></div>
+        <div class="metric-value"><span id="download-result">—</span><small>Mbps</small></div>
+        <p>ความเร็วในการรับข้อมูล</p>
+      </article>
+      <article class="result-card">
+        <div class="result-heading"><span class="metric-icon upload-icon">↑</span><span>Upload</span></div>
+        <div class="metric-value"><span id="upload-result">—</span><small>Mbps</small></div>
+        <p>ความเร็วในการส่งข้อมูล</p>
+      </article>
+      <article class="result-card">
+        <div class="result-heading"><span class="metric-icon ping-icon">◷</span><span>Ping</span></div>
+        <div class="metric-value"><span id="ping-result">—</span><small>ms</small></div>
+        <p>เวลาตอบสนองของเครือข่าย</p>
+      </article>
+      <article class="result-card">
+        <div class="result-heading"><span class="metric-icon jitter-icon">≈</span><span>Jitter</span></div>
+        <div class="metric-value"><span id="jitter-result">—</span><small>ms</small></div>
+        <p>ความแปรปรวนของค่า Ping</p>
+      </article>
+    </section>
 
-        <!-- แสดงผลลัพธ์ย่อย (Ping, Jitter, Download, Upload) -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 pt-6 border-t border-slate-800 text-center">
-            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/60">
-                <div class="text-slate-400 text-xs mb-1">ปิง (Ping)</div>
-                <div id="res-ping" class="tabular-nums text-base font-bold text-blue-400">- ms</div>
-            </div>
-            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/60">
-                <div class="text-slate-400 text-xs mb-1">จิตเตอร์ (Jitter)</div>
-                <div id="res-jitter" class="tabular-nums text-base font-bold text-yellow-400">- ms</div>
-            </div>
-            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/60">
-                <div class="text-slate-400 text-xs mb-1">ดาวน์โหลด</div>
-                <div id="res-download" class="tabular-nums text-base font-bold text-green-400">- Mbps</div>
-            </div>
-            <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/60">
-                <div class="text-slate-400 text-xs mb-1">อัปโหลด</div>
-                <div id="res-upload" class="tabular-nums text-base font-bold text-purple-400">- Mbps</div>
-            </div>
-        </div>
-
-        <!-- ระบบแสดงผลสรุปเมื่อทดสอบเสร็จ -->
-        <div id="summary-box" class="hidden mt-6 p-4 rounded-xl bg-slate-950/80 border border-slate-800 text-left text-xs space-y-1">
-            <div class="font-bold text-blue-400 mb-1 flex items-center gap-1">📊 สรุปผลการทดสอบเครือข่าย</div>
-            <div id="summary-content" class="text-slate-300"></div>
-        </div>
-
-        <!-- กล่องแสดงข้อผิดพลาด (Error Box) -->
-        <div id="error-box" class="hidden mt-4 p-3 bg-red-950/40 border border-red-800/50 rounded-xl text-red-400 text-xs"></div>
-
-    </main>
-
-    <!-- Footer -->
-    <footer class="text-center text-slate-500 text-xs py-4">
-        Real Data Network Benchmark • HTML5 & Fetch API
-    </footer>
-
-    <script src="script.js"></script>
+    <p class="disclaimer">หมายเหตุ: การทดสอบนี้ใช้บริการทดสอบของ Cloudflare ผ่านเบราว์เซอร์ ค่า Ping ที่แสดงเป็นเวลาในการร้องขอ HTTP ไม่ใช่ ICMP Ping แบบเครื่องมือเครือข่ายโดยตรง</p>
+  </main>
+  <footer>สร้างเพื่อทดสอบความเร็วอินเทอร์เน็ต · ไม่เก็บประวัติการทดสอบ</footer>
 </body>
 </html>

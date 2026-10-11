@@ -7,26 +7,14 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- เชื่อมโยงไฟล์ CSS ภายนอก -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="min-h-screen flex flex-col items-center justify-between p-4 md:p-8">
 
-    <!-- Header & Server Selector -->
-    <header class="max-w-xl mx-auto w-full flex flex-col sm:flex-row justify-between items-center gap-4 py-4">
-        <div>
-            <h1 class="text-xl font-bold text-blue-400 tracking-wide">LIVE SPEED TEST</h1>
-            <p class="text-slate-400 text-xs">ระบบวัดความเร็วเครือข่ายด้วยข้อมูลจริง</p>
-        </div>
-        <!-- ระบบเลือกเซิร์ฟเวอร์ -->
-        <div class="w-full sm:w-auto">
-            <label class="block text-slate-400 text-xs mb-1">เลือกเซิร์ฟเวอร์ทดสอบ</label>
-            <select id="server-select" class="w-full sm:w-48 bg-slate-800 border border-slate-700 text-slate-200 text-xs rounded-lg p-2 focus:outline-none focus:border-blue-500">
-                <option value="cloudflare">Cloudflare Global Edge</option>
-                <option value="wikimedia">Wikimedia Foundation</option>
-                <option value="jsdelivr">jsDelivr CDN</option>
-            </select>
-        </div>
+    <!-- Header (เอาตัวเลือกเซิร์ฟเวอร์ออก เหลือแค่หัวข้อ) -->
+    <header class="max-w-xl mx-auto w-full text-center py-4">
+        <h1 class="text-xl font-bold text-blue-400 tracking-wide">LIVE SPEED TEST</h1>
+        <p class="text-slate-400 text-xs mt-1">ระบบวัดความเร็วเครือข่ายด้วยข้อมูลจริง</p>
     </header>
 
     <!-- Main Card -->
@@ -89,7 +77,6 @@
         Real Data Network Benchmark • HTML5 & Fetch API
     </footer>
 
-    <!-- เชื่อมโยงไฟล์ JavaScript ภายนอก -->
     <script src="script.js"></script>
 </body>
 </html>

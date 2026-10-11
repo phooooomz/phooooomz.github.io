@@ -16,7 +16,7 @@ const jitterResult = $('jitter-result');
 let running = false;
 
 function setStatus(phase, message, progress) {
-  phaseLabel.textContent = phase;
+  if (phaseLabel) phaseLabel.textContent = phase;
   statusMessage.textContent = message;
   progressBar.style.width = `${Math.max(0, Math.min(100, progress))}%`;
 }
@@ -128,7 +128,7 @@ async function measureDownload(durationMs = 7000) {
   if (workerError) throw workerError;
   const elapsed = (performance.now() - start) / 1000;
   if (!totalBytes || elapsed <= 0) throw new Error('เซิร์ฟเวอร์ไม่ส่งข้อมูลทดสอบกลับมา');
-  return (totalBytes * 8) / elapsed / 1_000_000;
+  return { speed: (totalBytes * 8) / elapsed / 1_000_000, elapsed, bytes: totalBytes };
 }
 
 async function measureUpload(durationMs = 4500) {
@@ -148,7 +148,7 @@ async function measureUpload(durationMs = 4500) {
     setStatus('กำลังวัด Upload', `ส่งข้อมูลแล้ว ${(bytes / 1_000_000).toFixed(1)} MB`, 70 + Math.min(25, (elapsed / (durationMs / 1000)) * 25));
   }
   const elapsed = (performance.now() - started) / 1000;
-  return (bytes * 8) / elapsed / 1_000_000;
+  return { speed: (bytes * 8) / elapsed / 1_000_000, elapsed, bytes };
 }
 
 async function runTest() {
@@ -164,20 +164,24 @@ async function runTest() {
   progressBar.style.width = '0%';
 
   try {
-    setStatus('กำลังตรวจสอบ Ping', 'กำลังส่งคำขอทดสอบไปยังเซิร์ฟเวอร์', 5);
+    setStatus('กำลังวัด Download', 'กำลังรับข้อมูลเพื่อวัดความเร็วอินเทอร์เน็ต', 5);
+    const down = await measureDownload();
+    downloadResult.textContent = formatMetric(down.speed);
+    showSpeed(down.speed);
+    setStatus('รับข้อมูลเสร็จแล้ว', `ใช้เวลา ${down.elapsed.toFixed(2)} วินาที · รับข้อมูล ${(down.bytes / 1_000_000).toFixed(1)} MB`, 55);
+
+    setStatus('กำลังวัด Upload', 'กำลังส่งข้อมูลไปยังเซิร์ฟเวอร์ทดสอบ', 60);
+    const up = await measureUpload();
+    uploadResult.textContent = formatMetric(up.speed);
+    setStatus('ส่งข้อมูลเสร็จแล้ว', `ใช้เวลา ${up.elapsed.toFixed(2)} วินาที · ส่งข้อมูล ${(up.bytes / 1_000_000).toFixed(1)} MB`, 80);
+
+    setStatus('กำลังวัด Ping และ Jitter', 'กำลังวัดเวลาในการตอบสนองหลายครั้ง', 85);
     const latency = await measurePing();
     pingResult.textContent = formatMetric(latency.ping);
     jitterResult.textContent = formatMetric(latency.jitter);
-    setStatus('กำลังเตรียมทดสอบ', 'เชื่อมต่อเซิร์ฟเวอร์สำเร็จ', 20);
 
-    const down = await measureDownload();
-    downloadResult.textContent = formatMetric(down);
-    showSpeed(down);
-
-    const up = await measureUpload();
-    uploadResult.textContent = formatMetric(up);
-    showSpeed(down);
-    setStatus('ทดสอบเสร็จแล้ว', 'วัดความเร็วเสร็จเรียบร้อยแล้ว', 100);
+    showSpeed(down.speed);
+    setStatus('ทดสอบเสร็จแล้ว', 'วัด Download, Upload, Ping และ Jitter เสร็จเรียบร้อย', 100);
     statusMessage.textContent = 'ทดสอบเสร็จแล้ว · กดปุ่มด้านล่างเพื่อทดสอบอีกครั้ง';
   } catch (error) {
     console.error('Speed test error:', error);

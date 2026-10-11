@@ -33,7 +33,6 @@ h1 { margin: 0; font-size: clamp(24px, 4vw, 35px); letter-spacing: -1px; line-he
 .start-button:focus-visible { outline: 3px solid #a9c8ff; outline-offset: 3px; }
 .start-button:disabled { cursor: wait; opacity: .7; transform: none; }
 .status-message { min-height: 22px; margin: 16px 0 0; color: #555f6e; font-size: 13px; }
-.server-note { margin: 18px 0 0; color: #9aa1ac; font-size: 11px; }
 .results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 12px 0 30px; }
 .result-card { min-width: 0; padding: 20px 17px 18px; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
 .result-heading { display: flex; align-items: center; gap: 8px; color: #5d6674; font-size: 12px; font-weight: 700; }
@@ -46,8 +45,6 @@ h1 { margin: 0; font-size: clamp(24px, 4vw, 35px); letter-spacing: -1px; line-he
 .metric-value span { overflow: hidden; font-size: clamp(25px, 3.5vw, 34px); font-weight: 750; letter-spacing: -1.3px; font-variant-numeric: tabular-nums; }
 .metric-value small { color: #858d99; font-size: 11px; }
 .result-card p { margin: 8px 0 0; color: #9299a4; font-size: 11px; line-height: 1.5; }
-.disclaimer { margin: 0 auto 38px; max-width: 700px; color: #9299a4; font-size: 11px; line-height: 1.7; text-align: center; }
-footer { padding: 22px 16px; border-top: 1px solid #f0f1f4; color: #9aa1ac; text-align: center; font-size: 11px; }
 @media (max-width: 650px) {
   .topbar { height: 62px; }
   .brand { font-size: 19px; }

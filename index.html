@@ -24,7 +24,7 @@
       <div class="speed-display" aria-live="polite">
         <div class="speed-number-wrap">
           <span id="speed-number" class="speed-number">—</span>
-          <span class="speed-unit">Mbps</span>
+          <span id="speed-unit" class="speed-unit">Kbps</span>
         </div>
         <div id="phase-label" class="phase-label">พร้อมทดสอบ</div>
         <div class="progress-track" aria-hidden="true"><div id="progress-bar" class="progress-bar"></div></div>
@@ -32,7 +32,6 @@
 
       <button id="start-button" class="start-button" type="button">เริ่มทดสอบ</button>
       <p id="status-message" class="status-message" role="status">กดปุ่มเพื่อเริ่มวัดความเร็ว</p>
-      <p class="server-note">เซิร์ฟเวอร์ทดสอบ: Cloudflare · ผลลัพธ์อาจต่างกันตามเครือข่าย</p>
     </section>
 
     <section class="results" aria-label="ผลการทดสอบ">
@@ -58,8 +57,6 @@
       </article>
     </section>
 
-    <p class="disclaimer">หมายเหตุ: การทดสอบนี้ใช้บริการทดสอบของ Cloudflare ผ่านเบราว์เซอร์ ค่า Ping ที่แสดงเป็นเวลาในการร้องขอ HTTP ไม่ใช่ ICMP Ping แบบเครื่องมือเครือข่ายโดยตรง</p>
   </main>
-  <footer>สร้างเพื่อทดสอบความเร็วอินเทอร์เน็ต · ไม่เก็บประวัติการทดสอบ</footer>
 </body>
 </html>

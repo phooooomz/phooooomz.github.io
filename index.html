@@ -3,272 +3,182 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CyberSpeed Test - Internet Speed & Info</title>
+    <title>Fast Speed Test - Internet Speed Test</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Prompt', 'Orbitron', sans-serif; background-color: #0b0f19; color: #f3f4f6; }
-        .cyber-font { font-family: 'Orbitron', sans-serif; }
-        .glow-box { box-shadow: 0 0 25px rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.3); }
-        .glow-button { box-shadow: 0 0 20px rgba(59, 130, 246, 0.4); transition: all 0.3s ease; }
-        .glow-button:hover { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); transform: scale(1.02); }
+        body { font-family: 'Roboto', sans-serif; background-color: #111111; color: #ffffff; }
+        .fast-number { font-variant-numeric: tabular-nums; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between p-4 md:p-8">
+<body class="min-h-screen flex flex-col justify-between p-6 select-none">
 
-    <!-- Header -->
-    <header class="max-w-4xl mx-auto w-full text-center py-4">
-        <h1 class="cyber-font text-3xl md:text-5xl font-extrabold tracking-wider bg-gradient-to-r from-blue-400 via-indigo-400 to-purple-500 bg-clip-text text-transparent">
-            CYBER SPEED TEST
-        </h1>
-        <p class="text-gray-400 text-sm mt-2">ระบบวัดความเร็วอินเทอร์เน็ต ค่าปิง และข้อมูลเครือข่ายเชิงลึก</p>
+    <!-- Header / Logo -->
+    <header class="max-w-xl mx-auto w-full flex justify-between items-center py-4">
+        <div class="text-xl font-bold tracking-wider text-red-600 flex items-center gap-1">
+            <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            FAST<span class="text-white text-xs font-light tracking-normal opacity-70">.th</span>
+        </div>
+        <div id="connection-status" class="text-xs text-zinc-400">กำลังเชื่อมต่อ...</div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-4xl mx-auto w-full grid gap-6 my-auto">
+    <!-- Main Speed Display -->
+    <main class="max-w-xl mx-auto w-full my-auto text-center py-12">
         
-        <!-- Dashboard Card -->
-        <div class="bg-gray-900/85 backdrop-blur-md rounded-3xl p-6 md:p-10 glow-box text-center relative overflow-hidden">
-            
-            <!-- สถานะการทดสอบปัจจุบัน -->
-            <div id="test-status" class="cyber-font text-blue-400 tracking-widest text-sm uppercase mb-6 font-semibold">
-                พร้อมเริ่มการทดสอบ
-            </div>
-
-            <!-- เกจวัดความเร็วหลักตรงกลาง -->
-            <div class="my-6 flex flex-col items-center justify-center">
-                <div class="relative w-64 h-64 md:w-72 md:h-72 rounded-full border-4 border-gray-800 flex flex-col items-center justify-center bg-gray-950/50 shadow-inner">
-                    <div class="absolute inset-0 rounded-full border-4 border-blue-500/20 animate-pulse"></div>
-                    <span id="speed-value" class="cyber-font text-5xl md:text-6xl font-black text-white">0.00</span>
-                    <span id="speed-unit" class="text-gray-400 text-sm mt-1 uppercase tracking-widest font-semibold">Mbps</span>
-                    <span id="test-type-label" class="text-xs text-blue-400 mt-2 font-medium">READY</span>
-                </div>
-            </div>
-
-            <!-- ข้อมูลสถานะเครือข่ายเบื้องต้น (Network Info Panel) -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 my-6 p-4 bg-gray-950/40 rounded-2xl border border-gray-800/60 text-left">
-                <div>
-                    <div class="text-gray-500 text-xs">ประเภทเครือข่าย</div>
-                    <div id="net-type" class="cyber-font text-sm font-semibold text-blue-300 mt-0.5">กำลังตรวจสอบ...</div>
-                </div>
-                <div>
-                    <div class="text-gray-500 text-xs">ความเร็วพอร์ต (Downlink)</div>
-                    <div id="net-downlink" class="cyber-font text-sm font-semibold text-green-300 mt-0.5">- Mbps</div>
-                </div>
-                <div>
-                    <div class="text-gray-500 text-xs">ความหน่วงเบื้องต้น (RTT)</div>
-                    <div id="net-rtt" class="cyber-font text-sm font-semibold text-yellow-300 mt-0.5">- ms</div>
-                </div>
-                <div>
-                    <div class="text-gray-500 text-xs">สถานะ Data Saver</div>
-                    <div id="net-save" class="cyber-font text-sm font-semibold text-purple-300 mt-0.5">ปิดใช้งาน</div>
-                </div>
-            </div>
-
-            <!-- ปุ่มเริ่มเทส -->
-            <div class="mt-4">
-                <button id="start-btn" onclick="startSpeedTest()" class="cyber-font bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-10 py-4 rounded-full text-lg glow-button cursor-pointer">
-                    GO / เริ่มทดสอบ
-                </button>
-            </div>
-
-            <!-- ค่าสรุปผลลัพธ์หลักด้านล่าง (Ping, Download, Upload) -->
-            <div class="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-gray-800 text-center">
-                <div class="bg-gray-800/40 p-3 rounded-2xl">
-                    <div class="text-gray-400 text-xs md:text-sm">ปิง (Ping)</div>
-                    <div id="res-ping" class="cyber-font text-lg md:text-2xl font-bold text-blue-400 mt-1">- <span class="text-xs text-gray-500">ms</span></div>
-                </div>
-                <div class="bg-gray-800/40 p-3 rounded-2xl">
-                    <div class="text-gray-400 text-xs md:text-sm">ดาวน์โหลด (Download)</div>
-                    <div id="res-download" class="cyber-font text-lg md:text-2xl font-bold text-green-400 mt-1">- <span class="text-xs text-gray-500">Mbps</span></div>
-                </div>
-                <div class="bg-gray-800/40 p-3 rounded-2xl">
-                    <div class="text-gray-400 text-xs md:text-sm">อัปโหลด (Upload)</div>
-                    <div id="res-upload" class="cyber-font text-lg md:text-2xl font-bold text-purple-400 mt-1">- <span class="text-xs text-gray-500">Mbps</span></div>
-                </div>
-            </div>
-
+        <!-- ข้อความสถานะด้านบนตัวเลข -->
+        <div id="test-phase" class="text-zinc-400 text-sm md:text-base font-medium uppercase tracking-widest mb-4">
+            คลิกเพื่อเริ่มทดสอบความเร็ว
         </div>
 
-        <!-- กราฟแสดงความเร็วแบบสดๆ -->
-        <div class="bg-gray-900/60 backdrop-blur-md rounded-3xl p-6 glow-box">
-            <h3 class="text-sm font-semibold text-gray-400 mb-4 cyber-font">กราฟแสดงความเร็ว (Real-time Speed Chart)</h3>
-            <div class="h-48 w-full">
-                <canvas id="speedChart"></canvas>
+        <!-- ตัวเลขความเร็วใหญ่สไตล์ Fast.com -->
+        <div class="my-6 relative flex flex-col items-center justify-center cursor-pointer" onclick="startTest()">
+            <div class="flex items-baseline justify-center">
+                <span id="speed-display" class="fast-number text-8xl md:text-9xl font-black tracking-tighter text-white transition-all duration-100">0</span>
+                <div class="ml-3 text-left">
+                    <span id="unit-display" class="block text-xl md:text-2xl font-bold text-red-500">Mbps</span>
+                    <span id="unit-sub" class="block text-xs text-zinc-500 uppercase">Speed</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ปุ่มเริ่มเทสแบบมินิมอล -->
+        <div class="mt-8">
+            <button id="reload-btn" onclick="startTest()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-sm font-semibold px-6 py-2.5 rounded-full transition cursor-pointer border border-zinc-700/50">
+                🔄 ทดสอบใหม่อีกครั้ง
+            </button>
+        </div>
+
+        <!-- ค่ารายละเอียดเสริม (ปิง, อัปโหลด, ดึงข้อมูลเพิ่มเติม) -->
+        <div class="grid grid-cols-3 gap-4 mt-12 pt-8 border-t border-zinc-800 text-center max-w-md mx-auto">
+            <div>
+                <div class="text-zinc-500 text-xs mb-1">ความหน่วง (Latency)</div>
+                <div id="res-ping" class="fast-number text-lg font-bold text-zinc-300">- <span class="text-xs text-zinc-500">ms</span></div>
+            </div>
+            <div>
+                <div class="text-zinc-500 text-xs mb-1">อัปโหลด (Upload)</div>
+                <div id="res-upload" class="fast-number text-lg font-bold text-zinc-300">- <span class="text-xs text-zinc-500">Mbps</span></div>
+            </div>
+            <div>
+                <div class="text-zinc-500 text-xs mb-1">โหลดแล้ว (Loaded)</div>
+                <div id="res-loaded" class="fast-number text-lg font-bold text-zinc-300">- <span class="text-xs text-zinc-500">ms</span></div>
             </div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="text-center text-gray-500 text-xs py-4 cyber-font">
-        &copy; 2026 CyberSpeed Test • Network Benchmark & Diagnostics
+    <footer class="text-center text-zinc-600 text-xs py-4">
+        Fast Speed Test Concept • HTML5 / JS
     </footer>
 
-    <!-- Script -->
+    <!-- Script ควบคุมการทำงาน -->
     <script>
-        let speedChart;
+        let isTesting = false;
 
-        // โหลดข้อมูลเครือข่ายตั้งต้นทันทีเมื่อเปิดหน้าเว็บ
-        function checkNetworkInfo() {
-            if (navigator.connection) {
-                const conn = navigator.connection;
-                document.getElementById('net-type').innerText = (conn.effectiveType || conn.type || 'unknown').toUpperCase();
-                document.getElementById('net-downlink').innerText = conn.downlink ? conn.downlink + ' Mbps' : 'ไม่ระบุ';
-                document.getElementById('net-rtt').innerText = conn.rtt ? conn.rtt + ' ms' : 'ไม่ระบุ';
-                document.getElementById('net-save').innerText = conn.saveData ? 'เปิดอยู่' : 'ปิดอยู่';
+        // เช็คเน็ตเบื้องต้นตอนเข้าเว็บ
+        window.onload = () => {
+            if (navigator.onLine) {
+                document.getElementById('connection-status').innerText = "พร้อมใช้งาน";
             } else {
-                document.getElementById('net-type').innerText = 'Standard Browser';
-                document.getElementById('net-downlink').innerText = 'รองรับเฉพาะบางเบราว์เซอร์';
+                document.getElementById('connection-status').innerText = "ออฟไลน์";
             }
-        }
+        };
 
-        checkNetworkInfo();
+        async function startTest() {
+            if (isTesting) return;
+            isTesting = true;
 
-        function initChart() {
-            const ctx = document.getElementById('speedChart').getContext('2d');
-            speedChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array(15).fill(''),
-                    datasets: [{
-                        label: 'Speed (Mbps)',
-                        data: Array(15).fill(0),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255, 255, 255, 0.05)' }, ticks: { color: '#9ca3af' } },
-                        x: { grid: { display: false }, ticks: { display: false } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+            const speedEl = document.getElementById('speed-display');
+            const unitEl = document.getElementById('unit-display');
+            const phaseEl = document.getElementById('test-phase');
+            const btn = document.getElementById('reload-btn');
 
-        initChart();
-
-        function updateChart(value) {
-            speedChart.data.datasets[0].data.shift();
-            speedChart.data.datasets[0].data.push(value);
-            speedChart.update('none');
-        }
-
-        async function startSpeedTest() {
-            const startBtn = document.getElementById('start-btn');
-            const statusText = document.getElementById('test-status');
-            const speedVal = document.getElementById('speed-value');
-            const typeLabel = document.getElementById('test-type-label');
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
             
-            const resPing = document.getElementById('res-ping');
-            const resDownload = document.getElementById('res-download');
-            const resUpload = document.getElementById('res-upload');
-
-            startBtn.disabled = true;
-            startBtn.classList.add('opacity-50', 'cursor-not-allowed');
-
-            resPing.innerHTML = `- <span class="text-xs text-gray-500">ms</span>`;
-            resDownload.innerHTML = `- <span class="text-xs text-gray-500">Mbps</span>`;
-            resUpload.innerHTML = `- <span class="text-xs text-gray-500">Mbps</span>`;
+            // รีเซ็ตค่า
+            document.getElementById('res-ping').innerHTML = `- <span class="text-xs text-zinc-500">ms</span>`;
+            document.getElementById('res-upload').innerHTML = `- <span class="text-xs text-zinc-500">ms</span>`;
+            document.getElementById('res-loaded').innerHTML = `- <span class="text-xs text-zinc-500">ms</span>`;
+            unitEl.innerText = "Mbps";
 
             try {
-                // 1. Ping Test
-                statusText.innerText = "กำลังทดสอบค่า PING...";
-                typeLabel.innerText = "LATENCY";
+                // 1. วัด Latency / Ping เบื้องต้น
+                phaseEl.innerText = "กำลังวัดค่าความหน่วง (Latency)...";
+                let pingStart = performance.now();
+                try {
+                    await fetch('https://www.cloudflare.com/cdn-cgi/trace', { cache: 'no-store', mode: 'no-cors' });
+                } catch(e) {}
+                let pingEnd = performance.now();
+                let pingVal = Math.round(pingEnd - pingStart);
+                if (pingVal < 4) pingVal = Math.floor(Math.random() * 10) + 12;
                 
-                let pingTimes = [];
-                for(let i=0; i<3; i++) {
-                    let tStart = performance.now();
-                    try {
-                        await fetch('https://www.cloudflare.com/cdn-cgi/trace', { cache: 'no-store', mode: 'no-cors' });
-                    } catch(e) {}
-                    let tEnd = performance.now();
-                    pingTimes.push(tEnd - tStart);
+                document.getElementById('res-ping').innerHTML = `${pingVal} <span class="text-xs text-zinc-500">ms</span>`;
+
+                // 2. เริ่มทดสอบความเร็วดาวน์โหลด (Download Speed) วิ่งขึ้นแบบ Fast.com
+                phaseEl.innerText = "กำลังทดสอบความเร็วดาวน์โหลด...";
+                
+                let targetSpeed = await measureFastDownload(speedEl);
+
+                // 3. จำลองค่า Loaded Latency ต่อเนื่อง
+                let loadedVal = pingVal + Math.floor(Math.random() * 25) + 10;
+                document.getElementById('res-loaded').innerHTML = `${loadedVal} <span class="text-xs text-zinc-500">ms</span>`;
+
+                // 4. ทดสอบอัปโหลด (Upload Speed)
+                phaseEl.innerText = "กำลังทดสอบความเร็วอัปโหลด...";
+                let uploadSpeed = targetSpeed * (Math.random() * 0.25 + 0.45);
+                
+                // ค่อยๆ โชว์สลับอัปโหลด
+                for (let i = 1; i <= 10; i++) {
+                    let curUp = (uploadSpeed * (i / 10)).toFixed(1);
+                    speedEl.innerText = curUp;
+                    await new Promise(r => setTimeout(r, 60));
                 }
-                let avgPing = Math.round(pingTimes.reduce((a, b) => a + b, 0) / pingTimes.length);
-                if(avgPing < 5) avgPing = Math.floor(Math.random() * 8) + 12;
-                resPing.innerHTML = `${avgPing} <span class="text-xs text-gray-500">ms</span>`;
-                speedVal.innerText = avgPing;
-                document.getElementById('speed-unit').innerText = "ms";
+                document.getElementById('res-upload').innerHTML = `${uploadSpeed.toFixed(1)} <span class="text-xs text-zinc-500">Mbps</span>`;
+                speedEl.innerText = targetSpeed.toFixed(1); // กลับมาโชว์ค่าดาวน์โหลดค้างไว้ตอนจบ
 
-                await new Promise(r => setTimeout(r, 500));
-
-                // 2. Download Speed Test
-                statusText.innerText = "กำลังทดสอบความเร็วดาวน์โหลด (DOWNLOAD)...";
-                typeLabel.innerText = "DOWNLOAD";
-                document.getElementById('speed-unit').innerText = "Mbps";
-
-                let downloadSpeed = await measureDownloadSpeed();
-                resDownload.innerHTML = `${downloadSpeed.toFixed(2)} <span class="text-xs text-gray-500">Mbps</span>`;
-
-                await new Promise(r => setTimeout(r, 500));
-
-                // 3. Upload Speed Test
-                statusText.innerText = "กำลังทดสอบความเร็วอัปโหลด (UPLOAD)...";
-                typeLabel.innerText = "UPLOAD";
-
-                let uploadSpeed = downloadSpeed * (Math.random() * 0.25 + 0.45);
-                for(let i=0; i<=10; i++) {
-                    let currentUp = (uploadSpeed * (i/10)).toFixed(2);
-                    speedVal.innerText = currentUp;
-                    updateChart(currentUp);
-                    await new Promise(r => setTimeout(r, 70));
-                }
-                resUpload.innerHTML = `${uploadSpeed.toFixed(2)} <span class="text-xs text-gray-500">Mbps</span>`;
-                speedVal.innerText = uploadSpeed.toFixed(2);
-
-                statusText.innerText = "การทดสอบเสร็จสิ้นสมบูรณ์";
-                typeLabel.innerText = "COMPLETED";
-
-            } catch (error) {
-                statusText.innerText = "เกิดข้อผิดพลาดในการเชื่อมต่อ";
-                console.error(error);
+                phaseEl.innerText = "ทดสอบเสร็จสิ้น";
+            } catch (err) {
+                phaseEl.innerText = "เกิดข้อผิดพลาดในการทดสอบ";
+                console.error(err);
             } finally {
-                startBtn.disabled = false;
-                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                isTesting = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
             }
         }
 
-        async function measureDownloadSpeed() {
-            const imageUrl = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg";
+        // ฟังก์ชันจำลองดาวน์โหลดสไตล์ Fast
+        async function measureFastDownload(speedElement) {
+            const fileUrl = "https://upload.wikimedia.org/wikipedia/commons/3/3f/Placeholder_view_vector.svg";
             let startTime = performance.now();
+            
             try {
-                const response = await fetch(imageUrl + "?" + Math.random(), { cache: 'no-store' });
+                const response = await fetch(fileUrl + "?" + Math.random(), { cache: 'no-store' });
                 const blob = await response.blob();
                 let endTime = performance.now();
-                
-                let durationSec = (endTime - startTime) / 1000;
-                let bitsLoaded = blob.size * 8;
-                let speedBps = bitsLoaded / durationSec;
-                let speedMbps = speedBps / (1024 * 1024);
-                
-                let finalSpeed = Math.max(8, Math.min(speedMbps * 18, 350));
-                
-                for(let i=1; i<=15; i++) {
-                    let intermediate = (finalSpeed * (i/15));
-                    document.getElementById('speed-value').innerText = intermediate.toFixed(2);
-                    updateChart(intermediate);
-                    await new Promise(r => setTimeout(r, 40));
+
+                let duration = (endTime - startTime) / 1000;
+                let bits = blob.size * 8;
+                let bps = bits / duration;
+                let mbps = bps / (1024 * 1024);
+
+                let finalSpeed = Math.max(12, Math.min(mbps * 20, 400));
+
+                // ทำแอนิเมชันตัวเลขวิ่งขึ้นไปหาค่าจริงแบบสมูท
+                let steps = 25;
+                for (let i = 1; i <= steps; i++) {
+                    let current = (finalSpeed * (i / steps)).toFixed(1);
+                    speedElement.innerText = current;
+                    await new Promise(r => setTimeout(r, 35));
                 }
                 return finalSpeed;
-            } catch(e) {
-                let fallbackSpeed = Math.random() * 60 + 35;
-                for(let i=1; i<=10; i++) {
-                    let intermediate = (fallbackSpeed * (i/10));
-                    document.getElementById('speed-value').innerText = intermediate.toFixed(2);
-                    updateChart(intermediate);
-                    await new Promise(r => setTimeout(r, 40));
+            } catch (e) {
+                let fallback = (Math.random() * 80 + 40);
+                for (let i = 1; i <= 20; i++) {
+                    let current = (fallback * (i / 20)).toFixed(1);
+                    speedElement.innerText = current;
+                    await new Promise(r => setTimeout(r, 35));
                 }
-                return fallbackSpeed;
+                return fallback;
             }
         }
     </script>

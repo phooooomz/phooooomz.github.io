@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#080b14">
-  <meta name="description" content="ทดสอบความเร็วอินเทอร์เน็ต Download, Upload, Ping และ Jitter">
+  <meta name="description" content="ทดสอบเวลา Download, ความเร็ว Upload, Ping และ Jitter">
   <title>Speed Test</title>
   <link rel="stylesheet" href="style.css">
   <script src="script.js" defer></script>
@@ -35,14 +35,19 @@
 
     <section class="results" aria-label="ผลการทดสอบ">
       <article class="result-card">
-        <div class="result-heading"><span class="metric-icon download-icon">↓</span><span>Download</span></div>
-        <div class="metric-value"><span id="download-result">—</span><small>Mbps</small></div>
-        <p>ความเร็วในการรับข้อมูล</p>
+        <div class="result-heading"><span class="metric-icon download-icon">↓</span><span>Download Time</span></div>
+        <div class="metric-value"><span id="download-time-result">—</span><small>วินาที</small></div>
+        <p>ระยะเวลารับข้อมูลจากเซิร์ฟเวอร์</p>
       </article>
       <article class="result-card">
         <div class="result-heading"><span class="metric-icon upload-icon">↑</span><span>Upload</span></div>
         <div class="metric-value"><span id="upload-result">—</span><small>Mbps</small></div>
         <p>ความเร็วในการส่งข้อมูล</p>
+      </article>
+      <article class="result-card">
+        <div class="result-heading"><span class="metric-icon upload-icon">↗</span><span>Upload Time</span></div>
+        <div class="metric-value"><span id="upload-time-result">—</span><small>วินาที</small></div>
+        <p>ระยะเวลาส่งข้อมูลไปยังเซิร์ฟเวอร์</p>
       </article>
       <article class="result-card">
         <div class="result-heading"><span class="metric-icon ping-icon">◷</span><span>Ping</span></div>

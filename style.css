@@ -14,7 +14,7 @@ body {
   margin: 0; min-height: 100vh; color: var(--ink);
   background:
     linear-gradient(180deg, rgba(5, 8, 18, .72), rgba(5, 8, 18, .88)),
-    url("https://img2.pic.in.th/2509.gif") center center / cover fixed no-repeat,
+    url("https://img2.pic.in.th/2511ef8cd2c2b8ad7497.jpg") center center / cover fixed no-repeat,
     #080b14;
 }
 .topbar {
@@ -45,7 +45,7 @@ h1 { margin: 0; font-size: clamp(24px, 4vw, 35px); letter-spacing: -1px; line-he
 .start-button:focus-visible { outline: 3px solid #a9c8ff; outline-offset: 3px; }
 .start-button:disabled { cursor: wait; opacity: .7; transform: none; }
 .status-message { min-height: 22px; margin: 16px 0 0; color: #c0c9dc; font-size: 13px; }
-.results { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 12px 0 30px; }
+.results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 12px 0 30px; }
 .result-card { min-width: 0; padding: 20px 17px 18px; border: 1px solid var(--line); border-radius: 15px; background: rgba(13, 18, 33, .68); box-shadow: 0 12px 36px rgba(0,0,0,.12); backdrop-filter: blur(14px); }
 .result-heading { display: flex; align-items: center; gap: 8px; color: #c5cde0; font-size: 12px; font-weight: 700; }
 .metric-icon { width: 27px; height: 27px; display: grid; place-items: center; border-radius: 8px; font-size: 19px; font-weight: 800; }

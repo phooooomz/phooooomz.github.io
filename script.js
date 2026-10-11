@@ -9,8 +9,9 @@ const speedUnit = $('speed-unit');
 const phaseLabel = $('phase-label');
 const statusMessage = $('status-message');
 const progressBar = $('progress-bar');
-const downloadResult = $('download-result');
+const downloadTimeResult = $('download-time-result');
 const uploadResult = $('upload-result');
+const uploadTimeResult = $('upload-time-result');
 const pingResult = $('ping-result');
 const jitterResult = $('jitter-result');
 let running = false;
@@ -157,8 +158,9 @@ async function runTest() {
   startButton.disabled = true;
   startButton.textContent = 'กำลังทดสอบ…';
   showSpeed(0);
-  downloadResult.textContent = '—';
+  downloadTimeResult.textContent = '—';
   uploadResult.textContent = '—';
+  uploadTimeResult.textContent = '—';
   pingResult.textContent = '—';
   jitterResult.textContent = '—';
   progressBar.style.width = '0%';
@@ -166,13 +168,14 @@ async function runTest() {
   try {
     setStatus('กำลังวัด Download', 'กำลังรับข้อมูลเพื่อวัดความเร็วอินเทอร์เน็ต', 5);
     const down = await measureDownload();
-    downloadResult.textContent = formatMetric(down.speed);
+    downloadTimeResult.textContent = down.elapsed.toFixed(2);
     showSpeed(down.speed);
     setStatus('รับข้อมูลเสร็จแล้ว', `ใช้เวลา ${down.elapsed.toFixed(2)} วินาที · รับข้อมูล ${(down.bytes / 1_000_000).toFixed(1)} MB`, 55);
 
     setStatus('กำลังวัด Upload', 'กำลังส่งข้อมูลไปยังเซิร์ฟเวอร์ทดสอบ', 60);
     const up = await measureUpload();
     uploadResult.textContent = formatMetric(up.speed);
+    uploadTimeResult.textContent = up.elapsed.toFixed(2);
     setStatus('ส่งข้อมูลเสร็จแล้ว', `ใช้เวลา ${up.elapsed.toFixed(2)} วินาที · ส่งข้อมูล ${(up.bytes / 1_000_000).toFixed(1)} MB`, 80);
 
     setStatus('กำลังวัด Ping และ Jitter', 'กำลังวัดเวลาในการตอบสนองหลายครั้ง', 85);
@@ -180,8 +183,8 @@ async function runTest() {
     pingResult.textContent = formatMetric(latency.ping);
     jitterResult.textContent = formatMetric(latency.jitter);
 
-    showSpeed(down.speed);
-    setStatus('ทดสอบเสร็จแล้ว', 'วัด Download, Upload, Ping และ Jitter เสร็จเรียบร้อย', 100);
+    showSpeed(up.speed);
+    setStatus('ทดสอบเสร็จแล้ว', 'วัดเวลา Download, ความเร็วและเวลา Upload, Ping และ Jitter เสร็จเรียบร้อย', 100);
     statusMessage.textContent = 'ทดสอบเสร็จแล้ว · กดปุ่มด้านล่างเพื่อทดสอบอีกครั้ง';
   } catch (error) {
     console.error('Speed test error:', error);

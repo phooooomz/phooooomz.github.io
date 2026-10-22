@@ -14,7 +14,7 @@ body {
   margin: 0; min-height: 100vh; color: var(--ink);
   background:
     linear-gradient(180deg, rgba(5, 8, 18, .72), rgba(5, 8, 18, .88)),
-    url("https://img2.pic.in.th/2511ef8cd2c2b8ad7497.jpg") center center / cover fixed no-repeat,
+    url("https://img1.pic.in.th/images/25e30914-515c-435d-9d64-b2a715ffccb7-1_all_11153.jpg") center center / cover fixed no-repeat,
     #080b14;
 }
 .topbar {

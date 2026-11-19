@@ -1,26 +1,16 @@
 <!doctype html>
-<html lang="th">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Mahjong Demo</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <main class="game">
-    <header><div class="eyebrow">ARCADE DEMO</div><h1>MAHJONG <span>WAYS</span></h1><p>เกมทดลองจำลองวงล้อ • ไม่มีเงินจริง</p></header>
-    <section class="panel">
-      <div class="stats"><div><small>เครดิตทดลอง</small><strong id="credits">1000</strong></div><div><small>เดิมพัน</small><strong id="betLabel">10</strong></div><div><small>รางวัลล่าสุด</small><strong id="win">0</strong></div></div>
-      <div class="reels" id="reels" aria-label="วงล้อเกม">
-        <div class="reel">🀄</div><div class="reel">🀅</div><div class="reel">🀆</div><div class="reel">🀇</div><div class="reel">🀈</div>
-      </div>
-      <div class="message" id="message" aria-live="polite">กดเริ่มเล่นเพื่อทดลอง</div>
-      <div class="controls"><button id="minus" class="secondary">−</button><button id="spin" class="spin">เริ่มเล่น</button><button id="plus" class="secondary">+</button></div>
-      <div class="bottom"><button id="reset" class="text-button">รีเซ็ตเครดิต</button><span>เดิมพันต่อรอบ: <b id="betValue">10</b></span></div>
-    </section>
-    <section class="rules"><h2>วิธีเล่น</h2><p>ปรับเดิมพันด้วยปุ่ม + / − แล้วกดเริ่มเล่น หากสัญลักษณ์ตรงกัน 3 ตัวขึ้นไปจะได้รับเครดิตทดลองตามจำนวนที่ตรงกัน</p><p class="fine">นี่เป็นเกมตัวอย่างเพื่อความบันเทิงเท่านั้น ไม่มีระบบฝาก ถอน หรือเงินจริง</p></section>
-    <footer>Mahjong Demo • เวอร์ชันทดลอง</footer>
-  </main>
-  <script src="script.js"></script>
-</body>
-</html>
+<html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#101b18"><title>Mahjong Ways 2 — Demo</title><link rel="stylesheet" href="style.css"></head>
+<body><main class="app">
+<header class="top"><div class="brand"><span class="seal">🀄</span><div><b>MAHJONG <em>WAYS 2</em></b><small>ARCADE DEMO • เครดิตทดลองเท่านั้น</small></div></div><button id="sound" class="iconbtn" aria-label="เปิดปิดเสียง">🔊</button></header>
+<section class="hero"><div class="heroText"><span class="tag">JADE TEMPLE</span><h1>เส้นทางแห่ง<br><i>โชคลาภ</i></h1><p>หมุนวงล้อ จับคู่สัญลักษณ์ และสะสมตัวคูณ</p></div><div class="lantern">🏮</div></section>
+<section class="machine">
+<div class="meter"><div><small>เครดิตทดลอง</small><strong id="balance">10,000</strong></div><div><small>เดิมพันต่อรอบ</small><strong id="betReadout">20</strong></div><div><small>ชนะล่าสุด</small><strong id="lastWin">0</strong></div></div>
+<div class="gameFrame"><div class="frameTop"><span>✦ JADE REELS ✦</span><span id="multiplier">ตัวคูณ x1</span></div><div id="grid" class="grid" aria-label="วงล้อเกม"></div><div class="frameBottom"><span id="status">พร้อมเริ่มเกม</span><span id="ways">1,024 WAYS</span></div></div>
+<div class="controls"><div class="betControl"><button id="betDown">−</button><div><small>เดิมพัน</small><b id="betValue">20</b></div><button id="betUp">+</button></div><button id="spin" class="spin"><span>▶</span> หมุน</button><button id="auto" class="auto">AUTO</button></div>
+<div class="subcontrols"><button id="help">วิธีเล่น / ตารางรางวัล</button><button id="reset">รีเซ็ตเครดิต</button></div>
+</section>
+<section class="featureRow"><div>🀄 <b>WAYS</b><small>จับคู่จากซ้ายไปขวา</small></div><div>✨ <b>WILD</b><small>แทนสัญลักษณ์ทั่วไป</small></div><div>🎁 <b>FREE SPINS</b><small>Scatter 3 ตัวขึ้นไป</small></div></section>
+<footer>เกมจำลองเพื่อความบันเทิง • ไม่มีเงินจริง • ไม่มีฝากถอน</footer>
+</main>
+<div id="modal" class="modal hidden"><div class="dialog"><button id="close" class="close">✕</button><h2>วิธีเล่น & ตารางรางวัล</h2><p>จับคู่สัญลักษณ์ชนิดเดียวกันอย่างน้อย 3 ตัวในวงล้อที่ติดกันจากซ้ายไปขวา ระบบจะนับจำนวนวิธี (Ways) และจ่ายรางวัลตามสัญลักษณ์</p><ul><li>✨ WILD: ใช้แทนสัญลักษณ์ทั่วไป</li><li>🎁 SCATTER: ได้ 8 Free Spins เมื่อออก 3 ตัวขึ้นไป</li><li>ตัวคูณจะเพิ่มขึ้นเมื่อชนะต่อเนื่องในรอบ Free Spins</li><li>สัญลักษณ์ที่ชนะจะหายไปและมีตัวใหม่ตกลงมา (Cascade)</li></ul><div class="paytable"><div>🐉 มังกร <b>ชนะสูง</b></div><div>🀄 ไพ่มังกร <b>ชนะสูง</b></div><div>🀅 🀆 🀇 <b>ชนะกลาง</b></div><div>🀈 🀉 🀊 🀋 <b>ชนะพื้นฐาน</b></div></div><p class="note">ผลลัพธ์ทั้งหมดเป็นการสุ่มเพื่อสาธิต ไม่ใช่อัตราจ่ายหรือกลไกจริงของเกม PG Soft</p></div></div>
+<script src="game.js"></script></body></html>
